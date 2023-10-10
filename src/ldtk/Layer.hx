@@ -3,6 +3,9 @@ package ldtk;
 import ldtk.Json;
 
 class Layer {
+
+    public static var MAX_AUTO_PATTERN_SIZE = 9;
+    public static var AUTO_LAYER_ANYTHING = 1000001;
 	var untypedProject: ldtk.Project;
 
 	/** Original JSON object **/
@@ -46,6 +49,7 @@ class Layer {
 	/** Layer opacity (0-1) **/
 	public var opacity : Float;
 
+    public var seed : Int;
 
 	public function new(p:ldtk.Project, json:ldtk.Json.LayerInstanceJson) {
 		this.json = json;
@@ -65,6 +69,8 @@ class Layer {
 		pxTotalOffsetY = json.__pxTotalOffsetY;
 		opacity = json.__opacity;
 		visible = json.visible==true;
+
+        seed = Std.random(9999999);
 	}
 
 	/** Print class debug info **/
@@ -90,4 +96,20 @@ class Layer {
 	}
 
 	inline function getCoordId(cx,cy) return cx+cy*cWid;
+
+    public function isRuleGroupActiveHere(rg:AutoLayerRuleGroupJson) {
+		return rg.active && !rg.isOptional || exists(json.optionalRules, rg.uid);
+	}
+
+    public function exists(arr:Array<Int>, uid:Int):Bool {
+        for(val in arr){
+            if(val == uid)
+                return true;
+        }
+        return false;
+    }
+
+    public inline function isValid(cx:Int,cy:Int) {
+		return cx>=0 && cx<cWid && cy>=0 && cy<cHei;
+	}
 }
