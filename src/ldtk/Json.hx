@@ -955,7 +955,7 @@ typedef AutoRuleDef = {
 	var chance: Float;
 
 	/** Defines how tileIds array is used **/
-	var tileMode: AutoLayerRuleTileMode;
+	var tileMode: String;
 
 	/** If TRUE, allow rule to be matched by flipping its pattern horizontally **/
 	var flipX: Bool;
@@ -964,7 +964,7 @@ typedef AutoRuleDef = {
 	var flipY: Bool;
 
 	/** Checker mode **/
-	var checker: AutoLayerRuleCheckerMode;
+	var checker: String;
 
 	/** X pivot of a tile stamp (0-1) **/
 	@only("'Stamp' tile mode")

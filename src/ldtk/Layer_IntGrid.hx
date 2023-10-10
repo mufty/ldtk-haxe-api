@@ -1,7 +1,6 @@
 package ldtk;
 
 import dn.M;
-import ldtk.Json.AutoLayerRuleGroupJson;
 import ldtk.Json.TilesetDefJson;
 import ldtk.Json.IntGridValueDef;
 import ldtk.Json.AutoRuleDef;
@@ -135,7 +134,7 @@ class Layer_IntGrid extends ldtk.Layer {
 
 
 		// Apply rules
-		var source = defJson.type==IntGrid ? this : null; //defJson.autoSourceLayerDefUid!=null ? level.getLayerInstance(defJson.autoSourceLayerDefUid) : 
+		var source = type==IntGrid ? this : null; //defJson.autoSourceLayerDefUid!=null ? level.getLayerInstance(defJson.autoSourceLayerDefUid) : 
 		if( source==null )
 			return;
 
@@ -172,16 +171,16 @@ class Layer_IntGrid extends ldtk.Layer {
 			autoTilesCache.get(r.uid).remove( coordId(cx,cy) );
 
 			// Modulos
-			if( r.checker!=Vertical && (cy-r.yOffset) % r.yModulo!=0 )
+			if(r.checker!="Vertical" && (cy-r.yOffset) % r.yModulo!=0 )
 				return false;
 
-			if( r.checker==Vertical && ( cy + ( Std.int(cx/r.xModulo)%2 ) )%r.yModulo!=0 )
+			if( r.checker=="Vertical" && ( cy + ( Std.int(cx/r.xModulo)%2 ) )%r.yModulo!=0 )
 				return false;
 
-			if( r.checker!=Horizontal && (cx-r.xOffset) % r.xModulo!=0 )
+			if( r.checker!="Horizontal" && (cx-r.xOffset) % r.xModulo!=0 )
 				return false;
 
-			if( r.checker==Horizontal && ( cx + ( Std.int(cy/r.yModulo)%2 ) )%r.xModulo!=0 )
+			if( r.checker=="Horizontal" && ( cx + ( Std.int(cy/r.yModulo)%2 ) )%r.xModulo!=0 )
 				return false;
 
 
@@ -283,14 +282,14 @@ class Layer_IntGrid extends ldtk.Layer {
 	}
 
     inline function requireType(t:ldtk.Json.LayerType) {
-		if( defJson.type!=t )
+		if( type!=t )
 			throw 'Only works on $t layer!';
 	}
 
     inline function addRuleTilesAt(r:AutoRuleDef, cx:Int, cy:Int, flips:Int) {
-		var tileIds = r.tileMode==Single ? [ getRandomTileForCoord(r, seed, cx,cy, flips) ] : r.tileIds;
+		var tileIds = r.tileMode=="Single" ? [ getRandomTileForCoord(r, seed, cx,cy, flips) ] : r.tileIds;
 		var td = getTilesetDef();
-		var stampInfos = r.tileMode==Single ? null : getRuleStampRenderInfos(r, td, tileIds, flips);
+		var stampInfos = r.tileMode=="Single" ? null : getRuleStampRenderInfos(r, td, tileIds, flips);
 
 		if( !autoTilesCache.get(r.uid).exists( coordId(cx,cy) ) )
 			autoTilesCache.get(r.uid).set( coordId(cx,cy), [] );
@@ -441,7 +440,7 @@ class Layer_IntGrid extends ldtk.Layer {
 	}
 
     public function isAutoLayer():Bool {
-        return defJson.type==IntGrid && defJson.tilesetDefUid!=null || defJson.type==AutoLayer;
+        return type==IntGrid && defJson.tilesetDefUid!=null || type==AutoLayer;
     }
 
 }
