@@ -12,7 +12,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 		inline function get_untypedTileset() return untypedProject._untypedTilesets.get(tilesetUid);
 
 	/** Tileset UID **/
-	public var tilesetUid(default,null) : Int;
+	public var tilesetUid : Int;
 
 
 	public function new(p,json) {
