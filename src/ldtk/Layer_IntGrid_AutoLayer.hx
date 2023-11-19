@@ -63,6 +63,35 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
         
 	}
 
+    override function applyAllAutoLayerRulesAt(cx:Int, cy:Int, wid:Int, hei:Int) {
+        super.applyAllAutoLayerRulesAt(cx, cy, wid, hei);
+
+        var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
+
+        if( autoTilesCache!=null ) {
+            var td = getTilesetDef();
+            iterateActiveRulesInDisplayOrder( this, (r)->{
+                if( autoTilesCache.exists( r.uid ) ) {
+                    for( allTiles in autoTilesCache.get( r.uid ).keyValueIterator() )
+                    for( tileInfos in allTiles.value ) {
+                        var at = {
+                            tileId: tileInfos.tid,
+                            flips: tileInfos.flips,
+                            alpha: r.alpha,
+                            renderX: tileInfos.x,
+                            renderY: tileInfos.y,
+                            ruleId: r.uid,
+                            coordId: allTiles.key,
+                        };
+                        arr.push(at);
+                    }
+                }
+            });
+        }
+        
+        autoTiles = arr;
+    }
+
 
 
 	#if !macro
