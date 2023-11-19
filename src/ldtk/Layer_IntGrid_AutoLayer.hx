@@ -68,6 +68,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 
         var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
 
+        //TODO would be better to only replace the update autotiles not all of them it's slow
         if( autoTilesCache!=null ) {
             var td = getTilesetDef();
             iterateActiveRulesInDisplayOrder( this, (r)->{
