@@ -128,9 +128,9 @@ class Layer_IntGrid extends ldtk.Layer {
 		//var maxRadius = Std.int( Layer.MAX_AUTO_PATTERN_SIZE*0.5 );
 		// Adjust bounds to also redraw nearby cells
 		var left = dn.M.imax( 0, cx - wid );
-		var right = dn.M.imin( cWid, cx + wid);
+		var right = dn.M.imin( cWid-1, cx + wid);
 		var top = dn.M.imax( 0, cy - hei );
-		var bottom = dn.M.imin( cHei, cy + hei);
+		var bottom = dn.M.imin( cHei-1, cy + hei);
 
 
 		// Apply rules
