@@ -211,7 +211,7 @@ class Layer_IntGrid extends ldtk.Layer {
 	}
 
     public function matches(r:AutoRuleDef, li:Layer, source:Layer_IntGrid, cx:Int, cy:Int, dirX=1, dirY=1) {
-		if( r.tileIds.length==0 )
+		if( r.tileRectsIds.length==0 )
 			return false;
 
 		if( r.chance<=0 || r.chance<1 && dn.M.randSeedCoords(li.json.seed+r.uid, cx,cy, 100) >= r.chance*100 )
@@ -287,15 +287,15 @@ class Layer_IntGrid extends ldtk.Layer {
 	}
 
     inline function addRuleTilesAt(r:AutoRuleDef, cx:Int, cy:Int, flips:Int) {
-		var tileIds = r.tileMode=="Single" ? [ getRandomTileForCoord(r, seed, cx,cy, flips) ] : r.tileIds;
+        var tileRectIds = getRandomTileRectIdsForCoord(r, seed, cx,cy, flips);
 		var td = getTilesetDef();
-		var stampInfos = r.tileMode=="Single" ? null : getRuleStampRenderInfos(r, td, tileIds, flips);
+		var stampInfos = r.tileMode=="Single" ? null : getRuleStampRenderInfos(r, td, tileRectIds, flips);
 
 		//if( !autoTilesCache.get(r.uid).exists( coordId(cx,cy) ) ) //reset whatever is already there to replace it
 			autoTilesCache.get(r.uid).set( coordId(cx,cy), [] );
 
 		autoTilesCache.get(r.uid).set( coordId(cx,cy), autoTilesCache.get(r.uid).get( coordId(cx,cy) ).concat(
-			tileIds.map( (tid)->{
+			tileRectIds.map( (tid)->{
 				return {
 					x: cx*defJson.gridSize + (stampInfos==null ? 0 : stampInfos.get(tid).xOff ) + getXOffsetForCoord(r, seed,cx,cy, flips),
 					y: cy*defJson.gridSize + (stampInfos==null ? 0 : stampInfos.get(tid).yOff ) + getYOffsetForCoord(r, seed,cx,cy, flips),
@@ -307,6 +307,13 @@ class Layer_IntGrid extends ldtk.Layer {
 				}
 			} )
 		));
+	}
+
+    public function getRandomTileRectIdsForCoord(r:AutoRuleDef, seed:Int, cx:Int,cy:Int, flips:Int) : Array<Int> {
+		if( r.tileRectsIds.length==0 )
+			return [];
+		else
+			return r.tileRectsIds[ dn.M.randSeedCoords( r.uid+seed+flips, cx,cy, r.tileRectsIds.length ) ];
 	}
 
     public inline function getTileSourceX(td:TilesetDefJson, tileId:Int) {
