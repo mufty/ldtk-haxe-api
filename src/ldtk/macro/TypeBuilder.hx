@@ -326,7 +326,11 @@ class TypeBuilder {
 		}
 
 		externEnumResolverSwitch = {
-			expr: ESwitch( macro name, resolverCases, macro { ldtk.Project.error("Unknown external enum name: "+name); null; } ),
+			expr: ESwitch(
+				macro name,
+				resolverCases,
+				macro { ldtk.Project.error("Unknown external enum name: "+name); null; }
+			),
 			pos: curPos,
 		}
 
@@ -850,7 +854,7 @@ class TypeBuilder {
 				/**
 					Get a level using a world pixel coord
 				**/
-				public function getLevelAt(worldX:Int, worldY:Int) : Null<$levelComplexType> {
+				public function getLevelAt(worldX:Float, worldY:Float) : Null<$levelComplexType> {
 					for(l in _untypedLevels)
 						if( worldX>=l.worldX && worldX<l.worldX+l.pxWid && worldY>=l.worldY && worldY<l.worldY+l.pxHei )
 							return cast l;
@@ -1101,11 +1105,10 @@ class TypeBuilder {
 	**/
 	static function createProjectToc() {
 		timer("projectToc");
-		var jsonToc = json.toc==null ? []  : json.toc;
 		var accessType : ComplexType = TAnonymous(json.defs.entities.map( function(ed) : Field {
 			return {
 				name: ed.identifier,
-				kind: FVar(macro : Array<ldtk.Json.EntityReferenceInfos>),
+				kind: FVar(macro : Array<ldtk.Json.TocInstanceData>),
 				pos: curPos,
 			}
 		}));
@@ -1220,6 +1223,7 @@ class TypeBuilder {
 					// return new $worldTypePath(project, arrayIndex, json);
 				}
 
+				@:haxe.warning("-WUnusedPattern")
 				override function _resolveExternalEnumValue<T>(name:String, enumValueId:String) : T {
 					return $externEnumResolverSwitch;
 				}
