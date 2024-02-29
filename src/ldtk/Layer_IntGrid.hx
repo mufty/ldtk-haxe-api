@@ -85,23 +85,4 @@ class Layer_IntGrid extends ldtk.Layer {
 		return td.opaqueTiles!=null ? td.opaqueTiles[tid]==true : false;
 	}*/
 
-    public inline function iterateActiveRulesInDisplayOrder( li:Layer, cbEachRule:(r:AutoRuleDef)->Void ) {
-		var ruleGroupIdx = defJson.autoRuleGroups.length-1;
-		while( ruleGroupIdx>=0 ) {
-			// Groups
-			if( li.isRuleGroupActiveHere(defJson.autoRuleGroups[ruleGroupIdx]) ) {
-				var rg = defJson.autoRuleGroups[ruleGroupIdx];
-				var ruleIdx = rg.rules.length-1;
-				while( ruleIdx>=0 ) {
-					// Rules
-					if( rg.rules[ruleIdx].active )
-						cbEachRule( rg.rules[ruleIdx] );
-
-					ruleIdx--;
-				}
-			}
-			ruleGroupIdx--;
-		}
-	}
-
 }
