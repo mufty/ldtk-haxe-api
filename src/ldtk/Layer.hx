@@ -130,8 +130,8 @@ class Layer {
 				if( old!=v ) {
 					decreaseAreaIntGridValueCount(old, cx,cy);
 					increaseAreaIntGridValueCount(v, cx, cy);
-					intGrid.set( coordId(cx,cy), v );
 				}
+                intGrid.set( coordId(cx,cy), v );
 				/*if( useAsyncRender )
 					asyncPaint(cx,cy, getIntGridValueColor(v));*/
 			}
@@ -150,11 +150,10 @@ class Layer {
 			asyncErase(cx,cy);*/
 	}
 
-    /*public function asyncErase(cx:Int, cy:Int) {
-        #if heaps
-        renderTarget.clearTile(cx,cy);
-        #end
-    }*/
+    public function resetCounters() {
+        areaIntGridUseCount = new Map();
+		layerIntGridUseCount = new Map();
+    }
 
 	public function recountAllIntGridValues() {
 		if( type!=IntGrid )
