@@ -33,8 +33,8 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 			});
 	}
 
-    public override function applyAllAutoLayerRules() {
-        super.applyAllAutoLayerRules();
+    public override function applyAllRules() {
+        super.applyAllRules();
 		
         var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
 
@@ -63,8 +63,8 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
         
 	}
 
-    override function applyAllAutoLayerRulesAt(cx:Int, cy:Int, wid:Int, hei:Int) {
-        super.applyAllAutoLayerRulesAt(cx, cy, wid, hei);
+    override function applyAllRulesAt(cx:Int, cy:Int, wid:Int, hei:Int) {
+        super.applyAllRulesAt(cx, cy, wid, hei);
 
         var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
 
@@ -105,6 +105,9 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 			if( target==null )
 				target = new h2d.TileGroup( untypedTileset.getAtlasTile() );
 
+			/*if(renderTarget != null)
+				target = renderTarget;*/
+
 			for( autoTile in autoTiles )
 				target.addAlpha(
 					autoTile.renderX + pxTotalOffsetX,
@@ -112,6 +115,9 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 					autoTile.alpha,
 					untypedTileset.getAutoLayerTile(autoTile)
 				);
+
+			/*if(renderTarget == null)
+				renderTarget = target;*/
 
 			return target;
 		}
