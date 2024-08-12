@@ -1,12 +1,6 @@
 package ldtk;
 
 class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
-	/**
-		A single array containing all AutoLayer tiles informations, in "render" order (ie. 1st is behind, last is on top)
-	**/
-	public var autoTiles : Array<ldtk.Layer_AutoLayer.AutoTile>;
-
-
 	/** Getter to layer untyped Tileset instance. The typed value is created in macro. **/
 	public var untypedTileset(get,never) : ldtk.Tileset;
 		inline function get_untypedTileset() return untypedProject._untypedTilesets.get(tilesetUid);
@@ -22,7 +16,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 		tilesetUid = json.__tilesetDefUid;
 
 		for(jsonAutoTile in json.autoLayerTiles)
-			autoTiles.push({
+			autoTiles.set(jsonAutoTile.px[0] + ":" + jsonAutoTile.px[1], {
 				tileId: jsonAutoTile.t,
 				flips: jsonAutoTile.f,
 				alpha: jsonAutoTile.a,
@@ -36,7 +30,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
     public override function applyAllRules() {
         super.applyAllRules();
 		
-        var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
+        var arr:Map<String, ldtk.Layer_AutoLayer.AutoTile> = [];
 
         if( autoTilesCache!=null ) {
             var td = getTilesetDef();
@@ -53,7 +47,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
                             ruleId: r.uid,
                             coordId: allTiles.key,
                         };
-                        arr.push(at);
+                        arr.set(tileInfos.x + ":" + tileInfos.y, at);
                     }
                 }
             });
@@ -66,7 +60,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
     override function applyAllRulesAt(cx:Int, cy:Int, wid:Int, hei:Int) {
         super.applyAllRulesAt(cx, cy, wid, hei);
 
-        var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
+        /*var arr:Map<String, ldtk.Layer_AutoLayer.AutoTile> = [];
 
         //TODO would be better to only replace the update autotiles not all of them it's slow
         if( autoTilesCache!=null ) {
@@ -84,13 +78,13 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
                             ruleId: r.uid,
                             coordId: allTiles.key,
                         };
-                        arr.push(at);
+                        arr.set(tileInfos.x + ":" + tileInfos.y, at);
                     }
                 }
             });
         }
         
-        autoTiles = arr;
+        autoTiles = arr;*/
     }
 
 
@@ -121,7 +115,34 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
 
 			return target;
 		}
+
+        public function renderTile(target:h2d.TileGroup, x:Int, y:Int):Void {
+            var autoTile = getAutoTile(x, y);
+            if (autoTile != null) {
+                target.addAlpha(
+                    autoTile.renderX + pxTotalOffsetX,
+                    autoTile.renderY + pxTotalOffsetY,
+                    autoTile.alpha,
+                    untypedTileset.getAutoLayerTile(autoTile)
+                );
+            }
+        }
 		#end
+
+        /**
+         * Get the AutoTile at the specified coordinates.
+         * @param x The x-coordinate.
+         * @param y The y-coordinate.
+         * @return The AutoTile at the specified coordinates, or null if none exists.
+         */
+         public function getAutoTile(x:Int, y:Int):ldtk.Layer_AutoLayer.AutoTile {
+            for (autoTile in autoTiles) {
+                if (autoTile.renderX == x && autoTile.renderY == y) {
+                    return autoTile;
+                }
+            }
+            return null;
+        }
 
 
 		#if flixel

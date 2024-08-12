@@ -60,6 +60,8 @@ class Layer {
 
 	public var ruleGroups:Array<AutoLayerRuleGroup>;
 
+	public var autoTiles : Map<String, ldtk.Layer_AutoLayer.AutoTile>;
+
 	var layerIntGridUseCount : Map<Int,Int> = new Map();
 	var areaIntGridUseCount : Map<Int, Map<Int,Int>> = new Map();
 	var intGridAreaSize = 10;
@@ -325,12 +327,19 @@ class Layer {
 		var bottom = dn.M.imin( cHei-1, cy + hei-1 + maxRadius );
 
 		// Apply rules
-		iterateActiveRulesInEvalOrder( this, (r)->{
+		iterateActiveRulesInDisplayOrder( this, (r)->{
+			clearAutoTilesCacheRect(r, left,top, right-left+1, bottom-top+1);
+			var ar = new AutoRule(r);
+			for(x in left...right+1)
+			for(y in top...bottom+1)
+				applyRuleAt(source, ar, x,y);
+		});
+		/*iterateActiveRulesInEvalOrder( this, (r)->{
 			clearAutoTilesCacheRect(r.defJson, left,top, right-left+1, bottom-top+1);
 			for(x in left...right+1)
 			for(y in top...bottom+1)
 				applyRuleAt(source, r, x,y);
-		});
+		});*/
 
 		// Discard using break-on-match flag
 		applyBreakOnMatchesArea(left,top, right-left+1, bottom-top+1);
@@ -574,7 +583,7 @@ class Layer {
 
 		autoTilesCache.get(r.uid).set( coordId(cx,cy), autoTilesCache.get(r.uid).get( coordId(cx,cy) ).concat(
 			tileRectIds.map( (tid)->{
-				return {
+				var tmp = {
 					x: cx*defJson.gridSize + (stampInfos==null ? 0 : stampInfos.get(tid).xOff ) + getXOffsetForCoord(r, seed,cx,cy, flips),
 					y: cy*defJson.gridSize + (stampInfos==null ? 0 : stampInfos.get(tid).yOff ) + getYOffsetForCoord(r, seed,cx,cy, flips),
 					srcX: getTileSourceX(td, tid),
@@ -582,7 +591,22 @@ class Layer {
 					tid: tid,
 					flips: flips,
 					a: r.alpha,
-				}
+				};
+				var atId = tmp.x + ":" + tmp.y;
+				var ttt = tid + "AAA";
+				if(tid == 0 && autoTiles.exists(atId))
+                	autoTiles.remove(atId);
+				else
+					autoTiles.set(atId, {
+						tileId: tmp.tid,
+						flips: tmp.flips,
+						alpha: r.alpha,
+						renderX: tmp.x,
+						renderY: tmp.y,
+						ruleId: r.uid,
+						coordId: coordId(cx,cy),
+					});
+				return tmp;
 			} )
 		));
 	}
