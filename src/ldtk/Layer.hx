@@ -593,7 +593,6 @@ class Layer {
 					a: r.alpha,
 				};
 				var atId = tmp.x + ":" + tmp.y;
-				var ttt = tid + "AAA";
 				if(tid == 0 && autoTiles.exists(atId))
                 	autoTiles.remove(atId);
 				else
