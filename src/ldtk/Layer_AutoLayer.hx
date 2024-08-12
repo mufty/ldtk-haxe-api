@@ -26,12 +26,6 @@ typedef AutoTile = {
 
 
 class Layer_AutoLayer extends ldtk.Layer {
-	/**
-		A single array containing all AutoLayer tiles informations, in "render" order
-	**/
-	public var autoTiles : Array<AutoTile>;
-
-
 	/** Getter to layer untyped Tileset instance. The typed value is created in macro. **/
 	var untypedTileset(get,never) : ldtk.Tileset;
 		inline function get_untypedTileset() return untypedProject._untypedTilesets.get(tilesetUid);
@@ -47,7 +41,7 @@ class Layer_AutoLayer extends ldtk.Layer {
 		tilesetUid = json.__tilesetDefUid;
 
 		for(jsonAutoTile in json.autoLayerTiles)
-			autoTiles.push({
+			autoTiles.set(jsonAutoTile.px[0] + ":" + jsonAutoTile.px[1], {
 				tileId: jsonAutoTile.t,
 				flips: jsonAutoTile.f,
 				alpha: jsonAutoTile.a,
@@ -61,7 +55,7 @@ class Layer_AutoLayer extends ldtk.Layer {
     public override function applyAllRules() {
         super.applyAllRules();
 		
-        var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
+        /*var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
 
         if( autoTilesCache!=null ) {
             var td = getTilesetDef();
@@ -84,14 +78,14 @@ class Layer_AutoLayer extends ldtk.Layer {
             });
         }
 
-        autoTiles = arr;
+        autoTiles = arr;*/
         
 	}
 
     override function applyAllRulesAt(cx:Int, cy:Int, wid:Int, hei:Int) {
         super.applyAllRulesAt(cx, cy, wid, hei);
 
-        var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
+        /*var arr:Array<ldtk.Layer_AutoLayer.AutoTile> = [];
 
         //TODO would be better to only replace the update autotiles not all of them it's slow
         if( autoTilesCache!=null ) {
@@ -115,7 +109,7 @@ class Layer_AutoLayer extends ldtk.Layer {
             });
         }
         
-        autoTiles = arr;
+        autoTiles = arr;*/
     }
 
 	#if !macro
@@ -144,7 +138,34 @@ class Layer_AutoLayer extends ldtk.Layer {
 
 			return target;
 		}
+
+        public function renderTile(target:h2d.TileGroup, x:Int, y:Int):Void {
+            var autoTile = getAutoTile(x, y);
+            if (autoTile != null) {
+                target.addAlpha(
+                    autoTile.renderX + pxTotalOffsetX,
+                    autoTile.renderY + pxTotalOffsetY,
+                    autoTile.alpha,
+                    untypedTileset.getAutoLayerTile(autoTile)
+                );
+            }
+        }
 		#end
+
+        /**
+         * Get the AutoTile at the specified coordinates.
+         * @param x The x-coordinate.
+         * @param y The y-coordinate.
+         * @return The AutoTile at the specified coordinates, or null if none exists.
+         */
+        public function getAutoTile(x:Int, y:Int):AutoTile {
+            for (autoTile in autoTiles) {
+                if (autoTile.renderX == x && autoTile.renderY == y) {
+                    return autoTile;
+                }
+            }
+            return null;
+        }
 
 
 		#if flixel
