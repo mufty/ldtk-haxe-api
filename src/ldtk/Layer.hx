@@ -332,7 +332,7 @@ class Layer {
 			var ar = new AutoRule(r);
 			for(x in left...right+1)
 			for(y in top...bottom+1)
-				applyRuleAt(source, ar, x,y);
+                applyRuleAt(source, ar, x,y);
 		});
 		/*iterateActiveRulesInEvalOrder( this, (r)->{
 			clearAutoTilesCacheRect(r.defJson, left,top, right-left+1, bottom-top+1);
@@ -592,7 +592,7 @@ class Layer {
 					flips: flips,
 					a: r.alpha,
 				};
-				var atId = tmp.x + ":" + tmp.y;
+				var atId = cx + ":" + cy;
 				if(tid == 0 && autoTiles.exists(atId))
                 	autoTiles.remove(atId);
 				else

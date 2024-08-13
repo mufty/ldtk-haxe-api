@@ -30,7 +30,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
     public override function applyAllRules() {
         super.applyAllRules();
 		
-        var arr:Map<String, ldtk.Layer_AutoLayer.AutoTile> = [];
+        /*var arr:Map<String, ldtk.Layer_AutoLayer.AutoTile> = [];
 
         if( autoTilesCache!=null ) {
             var td = getTilesetDef();
@@ -53,7 +53,7 @@ class Layer_IntGrid_AutoLayer extends ldtk.Layer_IntGrid {
             });
         }
 
-        autoTiles = arr;
+        autoTiles = arr;*/
         
 	}
 
